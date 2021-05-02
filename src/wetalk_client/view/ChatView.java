@@ -1,7 +1,7 @@
 package wetalk_client.view;
 
 import com.google.gson.reflect.TypeToken;
-import wetalk_client.controller.message.*;
+import wetalk_client.controller.requestMessage.*;
 import wetalk_client.model.MessageModel;
 import wetalk_client.model.UserModel;
 import wetalk_client.utils.Global;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.concurrent.*;
 
 public class ChatView extends View {
-    private final BlockingQueue<Message> queue;
+    private final BlockingQueue<RequestMessage> queue;
     private final UserModel loginedUser;
     private UserModel currentChattingFriend = null;
     private final JPanel ChatPanel;
@@ -35,7 +35,7 @@ public class ChatView extends View {
     private final JList<String> friendListJList;
     private Timer getLatestDataTimer;
 
-    public ChatView(BlockingQueue<Message> queue) {
+    public ChatView(BlockingQueue<RequestMessage> queue) {
         super();
 
         this.queue = queue;
@@ -44,7 +44,7 @@ public class ChatView extends View {
         this.setTitle("WeTalk User: " + loginedUser.getUsername());
 
         // load friendList
-        friendList = (ArrayList<UserModel>) Global.getInstance().get("friends");
+        friendList = (ArrayList<UserModel>) Global.getInstance().get("friendList");
 
         // load chat histories to MessageMode, then to global variable
         this.initLoadLocalMessages();
@@ -148,9 +148,9 @@ public class ChatView extends View {
 
     public void initGetRecentDataTimers() {
         ActionListener getLatestMessageListener = e -> {
-            Message getLatestMessageMessage = new GetLatestMessageMessage();
+            RequestMessage getLatestMessageRequestMessage = new GetLatestDataRequestMessage();
             try {
-                this.queue.put(getLatestMessageMessage);
+                this.queue.put(getLatestMessageRequestMessage);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
                 this.showAlert(ex.getMessage());
@@ -176,9 +176,9 @@ public class ChatView extends View {
         int receiverID = currentChattingFriend.getID();
         Long sendTimeStamp = System.currentTimeMillis();
         MessageModel messageModel = new MessageModel(this.loginedUser.getID(), receiverID, content, sendTimeStamp);
-        Message message = new SendMessageMessage(messageModel);
+        RequestMessage requestMessage = new SendMessageRequestMessage(messageModel);
         try {
-            this.queue.put(message);
+            this.queue.put(requestMessage);
         } catch (InterruptedException e) {
             e.printStackTrace();
             this.showAlert(e.getMessage());
@@ -319,9 +319,9 @@ public class ChatView extends View {
             if (username.equals("")) {
                 this.showAlert("Username can not be empty!");
             }
-            Message message = new AddFriendMessage(username);
+            RequestMessage requestMessage = new AddFriendRequestMessage(username);
             try {
-                this.queue.put(message);
+                this.queue.put(requestMessage);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
                 this.showAlert(ex.getMessage());
@@ -348,15 +348,15 @@ public class ChatView extends View {
         for(UserModel addFriendRequester : addFriendRequesters) {
             String requesterUsername = addFriendRequester.getUsername();
             int value = JOptionPane.showConfirmDialog(this, "Would you accept the add friend request from user: " + requesterUsername, "New Friend Request", JOptionPane.YES_NO_OPTION);
-            Message message;
+            RequestMessage requestMessage;
             if(value == JOptionPane.YES_OPTION) {
-                message = new AcceptFriendMessage(addFriendRequester.getID());
+                requestMessage = new AcceptFriendRequestMessage(addFriendRequester.getID());
                 acceptedUsers.add(addFriendRequester);
             } else {
-                message = new RejectFriendMessage(addFriendRequester.getID());
+                requestMessage = new RejectFriendRequestMessage(addFriendRequester.getID());
             }
             try {
-                this.queue.put(message);
+                this.queue.put(requestMessage);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 this.showAlert(e.getMessage());

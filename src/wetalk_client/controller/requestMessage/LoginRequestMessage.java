@@ -1,11 +1,14 @@
-package wetalk_client.controller.message;
+package wetalk_client.controller.requestMessage;
 
-public class LoginMessage implements Message {
+import wetalk_client.utils.Global;
+
+public class LoginRequestMessage extends RequestMessage {
+    public static final String requestName = Global.getInstance().getProperty("loginPrefix");
     private final String username;
     private final String password;
     private final boolean savePassword;
 
-    public LoginMessage(String username, String password, boolean savePassword) {
+    public LoginRequestMessage(String username, String password, boolean savePassword) {
         this.username = username;
         this.password = password;
         this.savePassword = savePassword;

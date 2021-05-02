@@ -1,9 +1,9 @@
 package wetalk_client.view;
 
 import com.google.gson.reflect.TypeToken;
-import wetalk_client.controller.message.LoginMessage;
-import wetalk_client.controller.message.Message;
-import wetalk_client.controller.message.SwitchViewMessage;
+import wetalk_client.controller.requestMessage.LoginRequestMessage;
+import wetalk_client.controller.requestMessage.RequestMessage;
+import wetalk_client.controller.requestMessage.SwitchViewRequestMessage;
 import wetalk_client.utils.Global;
 import wetalk_client.utils.Json;
 import wetalk_client.utils.LocalStorage;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 public class LoginView extends View {
-    BlockingQueue<Message> queue;
+    BlockingQueue<RequestMessage> queue;
     private final Panel loginPanel;
     private final JLabel usernameLabel;
     private final JLabel passwordLabel;
@@ -25,7 +25,7 @@ public class LoginView extends View {
     private final JButton loginButton;
     private final JButton registerButton;
 
-    public LoginView(BlockingQueue<Message> queue) {
+    public LoginView(BlockingQueue<RequestMessage> queue) {
         super();
 
         this.setTitle("Login");
@@ -69,9 +69,9 @@ public class LoginView extends View {
         });
         this.registerButton = new JButton("Register");
         this.registerButton.addActionListener(e -> {
-            Message message = new SwitchViewMessage(new RegisterView(queue));
+            RequestMessage requestMessage = new SwitchViewRequestMessage(new RegisterView(queue));
             try {
-                queue.put(message);
+                queue.put(requestMessage);
             } catch (InterruptedException interruptedException) {
                 // ignore
             }
@@ -96,7 +96,7 @@ public class LoginView extends View {
         String username = this.usernameTextField.getText();
         String password = this.passwordTextField.getText();
         boolean savePassword = this.savePasswordCheckbox.isSelected();
-        LoginMessage message = new LoginMessage(username, password, savePassword);
+        LoginRequestMessage message = new LoginRequestMessage(username, password, savePassword);
         try {
             this.queue.put(message);
         } catch (InterruptedException interruptedException) {
@@ -111,9 +111,9 @@ public class LoginView extends View {
     }
 
     public void loginSucceed() {
-        Message switchToChatViewMessage = new SwitchViewMessage(new LoadingView(queue));
+        RequestMessage switchToChatViewRequestMessage = new SwitchViewRequestMessage(new LoadingView(queue));
         try {
-            queue.put(switchToChatViewMessage);
+            queue.put(switchToChatViewRequestMessage);
         } catch (InterruptedException e) {
             // ignore
         }

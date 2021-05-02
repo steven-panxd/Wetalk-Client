@@ -1,15 +1,16 @@
 package wetalk_client.view;
 
-import wetalk_client.controller.message.Message;
-import wetalk_client.controller.message.RegisterMessage;
-import wetalk_client.controller.message.SwitchViewMessage;
-import wetalk_client.utils.Global;
+import wetalk_client.controller.requestMessage.RequestMessage;
+import wetalk_client.controller.requestMessage.RegisterRequestMessage;
+import wetalk_client.controller.requestMessage.SwitchViewRequestMessage;
+import wetalk_client.model.MessageModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.BlockingQueue;
 
 public class RegisterView extends View {
+    private final BlockingQueue<RequestMessage> queue;
     private final Panel registerPanel;
     private final JLabel usernameLabel;
     private final JLabel passwordLabel;
@@ -20,8 +21,9 @@ public class RegisterView extends View {
     private final JButton registerButton;
     private final JButton backButton;
 
-    public RegisterView(BlockingQueue<Message> queue) {
+    public RegisterView(BlockingQueue<RequestMessage> queue) {
         super();
+        this.queue = queue;
 
         this.setTitle("Register");
 
@@ -41,21 +43,13 @@ public class RegisterView extends View {
         this.rePasswordTextField = new JTextField(10);
         this.registerButton = new JButton("Register");
         this.registerButton.addActionListener(e -> {
-            String username = usernameTextField.getText();
-            String password = passwordTextField.getText();
-            String rePassword = rePasswordTextField.getText();
-            RegisterMessage message = new RegisterMessage(username, password, rePassword);
-            try {
-                queue.put(message);
-            } catch (InterruptedException interruptedException) {
-                // ignore
-            }
+            this.onRegister();
         });
         this.backButton = new JButton("Back");
         this.backButton.addActionListener(e -> {
-            Message message = new SwitchViewMessage(new LoginView(queue));
+            RequestMessage requestMessage = new SwitchViewRequestMessage(new LoginView(queue));
             try {
-                queue.put(message);
+                queue.put(requestMessage);
             } catch (InterruptedException interruptedException) {
                 // ignore
             }
@@ -65,6 +59,8 @@ public class RegisterView extends View {
         this.registerPanel.add(usernameTextField);
         this.registerPanel.add(passwordLabel);
         this.registerPanel.add(passwordTextField);
+        this.registerPanel.add(rePasswordLabel);
+        this.registerPanel.add(rePasswordTextField);
         this.registerPanel.add(registerButton);
         this.registerPanel.add(backButton);
 
@@ -73,11 +69,33 @@ public class RegisterView extends View {
         this.setVisible(true);
     }
 
-    public void registerFail(String message) {
-        this.showAlert(message);
+    private void onRegister() {
+        this.registerButton.setEnabled(false);
+        this.backButton.setEnabled(false);
+        String username = usernameTextField.getText();
+        String password = passwordTextField.getText();
+        String rePassword = rePasswordTextField.getText();
+        if(!password.equals(rePassword)) {
+            this.setRegisterFail("Two passwords are different, please try again.");
+            return;
+        }
+        RegisterRequestMessage message = new RegisterRequestMessage(username, password);
+        try {
+            this.queue.put(message);
+        } catch (InterruptedException interruptedException) {
+            // ignore
+        }
     }
 
-    public void registerSucceed() {
-        this.showAlert("ok");
+    public void setRegisterFail(String message) {
+        this.showAlert(message);
+        this.registerButton.setEnabled(true);
+        this.backButton.setEnabled(true);
+    }
+
+    public void setRegisterSucceed(String message) {
+        this.showAlert(message);
+        this.registerButton.setEnabled(true);
+        this.backButton.setEnabled(true);
     }
 }

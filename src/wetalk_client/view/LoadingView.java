@@ -1,20 +1,18 @@
 package wetalk_client.view;
 
-import javafx.util.Callback;
-import wetalk_client.controller.message.GetFriendListMessage;
-import wetalk_client.controller.message.Message;
-import wetalk_client.controller.message.SwitchViewMessage;
+import wetalk_client.controller.requestMessage.GetFriendListRequestMessage;
+import wetalk_client.controller.requestMessage.RequestMessage;
+import wetalk_client.controller.requestMessage.SwitchViewRequestMessage;
 import wetalk_client.utils.Global;
 
 import javax.swing.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 
 public class LoadingView extends View{
-    private final BlockingQueue<Message> queue;
+    private final BlockingQueue<RequestMessage> queue;
 
-    public LoadingView(BlockingQueue<Message> queue) {
+    public LoadingView(BlockingQueue<RequestMessage> queue) {
         super();
 
         this.queue = queue;
@@ -31,18 +29,18 @@ public class LoadingView extends View{
     }
 
     private void initChatView() {
-        Message getFriendListMessage = new GetFriendListMessage();
+        RequestMessage getFriendListRequestMessage = new GetFriendListRequestMessage();
         try {
-            queue.put(getFriendListMessage);
+            queue.put(getFriendListRequestMessage);
         }catch (InterruptedException e) {
             e.printStackTrace();
             this.showAlert(e.getMessage());
         }
 
         Runnable runnable = new WaitingFriendListRunnable(Global.getInstance(), () -> {
-            Message message = new SwitchViewMessage(new ChatView(queue));
+            RequestMessage requestMessage = new SwitchViewRequestMessage(new ChatView(queue));
             try {
-                this.queue.put(message);
+                this.queue.put(requestMessage);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 this.showAlert(e.getMessage());
@@ -53,7 +51,7 @@ public class LoadingView extends View{
         new Thread(runnable).start();
     }
 
-    class WaitingFriendListRunnable implements Runnable {
+    static class WaitingFriendListRunnable implements Runnable {
         private final Global global;
         private final Callable<Void> callback;
 
@@ -64,7 +62,7 @@ public class LoadingView extends View{
 
         public void run() {
             while(true) {
-                Object data = this.global.get("friends");
+                Object data = this.global.get("friendList");
 
                 // if data, break
                 if (data != null) {
