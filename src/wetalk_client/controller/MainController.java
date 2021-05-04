@@ -18,40 +18,43 @@ import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+
+/**
+ * Main controller of the project
+ */
 public class MainController {
     View view;
     BlockingQueue<RequestMessage> queue;
 
+    /**
+     * Constructor of MainController
+     * @param view current displaying view (JFrame window)
+     * @param queue a blocking queue contains RequestMessage sends from view
+     */
     public MainController(View view, BlockingQueue<RequestMessage> queue) {
         this.view = view;
         this.queue = queue;
     }
 
+    /**
+     * Setup network connection to Server
+     * Setup MyReceivedDataListener to handle returning data from Server
+     * Setup a blocking queue stores messages send by current user
+     * The while loop takes messages from view, cast the message to different methods in controllers,
+     * then encodes HashMap data to Json string request data and sends it to Server
+     */
     public void mainLoop() {
         Network networkConn = new Network(this.view, new MyReceivedDataListener());
 
-        // store temp sent message from login-ed user
+        // temporarily stores sent message from login-ed user
         Global.getInstance().put("sentMessageModelQueue", new LinkedBlockingQueue<>());
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                String accessToken = Global.getInstance().getProperty("accessToken", null);
-                if(accessToken != null) {
-                    HashMap<String, String> mapData = new HashMap<>();
-                    mapData.put("operation", Global.getInstance().getProperty("logoutPrefix"));
-                    mapData.put("accessToken", accessToken);
-                    String jsonData = Json.getInstance().toJson(mapData);
-                }
-            }
-        });
 
         while (true) {
             RequestMessage requestMessage = null;
             try {
                 requestMessage = queue.take();
             } catch (InterruptedException exception) {
-                // do nothing
+                // ignore
             }
 
             HashMap<String, String> mapData;
@@ -62,7 +65,7 @@ public class MainController {
                     this.view = ViewController.switchView(view, (SwitchViewRequestMessage) requestMessage);
                     continue;
                 } else if (requestMessage instanceof GetLatestDataRequestMessage) { // get the most recent messages
-                    mapData = UserSendRequestController.getLatestData((ChatView) view, (GetLatestDataRequestMessage) requestMessage);
+                    mapData = UserSendRequestController.getLatestData((GetLatestDataRequestMessage) requestMessage);
                 } else if (requestMessage instanceof LoginRequestMessage) {  // login
                     mapData = UserSendRequestController.login((LoginRequestMessage) requestMessage);
                 } else if (requestMessage instanceof RegisterRequestMessage) {
@@ -77,6 +80,8 @@ public class MainController {
                     mapData = UserSendRequestController.acceptFriend((AcceptFriendRequestMessage) requestMessage);
                 } else if (requestMessage instanceof RejectFriendRequestMessage) {
                     mapData = UserSendRequestController.rejectFriend((RejectFriendRequestMessage) requestMessage);
+                } else if (requestMessage instanceof DeleteFriendRequestMessage) {
+                    mapData = UserSendRequestController.deleteFriend((DeleteFriendRequestMessage) requestMessage);
                 } else {
                     this.view.showAlert("Client: No such router rule.");
                     continue;
@@ -105,8 +110,17 @@ public class MainController {
         }
     }
 
+    /**
+     * Listens on the data from the Server
+     */
     private class MyReceivedDataListener extends Listener{
-        // Receive Data Router
+
+        /**
+         * Be called when client receives Json string response from Server
+         * Decodes response and cast it to different response handlers
+         * @param connection current connection with Server
+         * @param response Json string response from server
+         */
         @Override
         public void received(Connection connection, Object response) {
             if(response instanceof FrameworkMessage.KeepAlive) {
@@ -138,6 +152,9 @@ public class MainController {
             } else if (responseStr.equals(RejectFriendResponseMessage.responseName)) {
                 RejectFriendResponseMessage message = new RejectFriendResponseMessage(objResponse.get("status"), objResponse.get("data"));
                 UserHandleResponseController.rejectFriend((ChatView) view, message);
+            } else if(responseStr.equals(DeleteFriendResponseMessage.responseName)) {
+                DeleteFriendResponseMessage message = new DeleteFriendResponseMessage(objResponse.get("status"), objResponse.get("data"));
+                UserHandleResponseController.deleteFriend((ChatView) view, message);
             } else {
                 GenericResponseMessage message = new GenericResponseMessage(objResponse.get("status"), objResponse.get("data"));
                 view.showAlert(message.getData().get("message"));

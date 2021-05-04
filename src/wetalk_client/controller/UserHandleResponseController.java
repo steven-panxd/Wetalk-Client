@@ -18,8 +18,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+
+/**
+ * Handing response from Server
+ */
 public class UserHandleResponseController {
 
+    /**
+     * Handling response from Server after client sent register request
+     * @param view current view
+     * @param message the response RegisterResponseMessage from server
+     */
+    public static void register(RegisterView view, RegisterResponseMessage message) {
+        if(message.getStatus()) {
+            String succeedMessage = message.getData().get("message");
+            view.setRegisterSucceed(succeedMessage);
+        } else {
+            String failMessage = message.getData().get("message");
+            view.setRegisterFail(failMessage);
+        }
+    }
+
+    /**
+     * Handling response from Server after client sent login request
+     * @param view current view
+     * @param message the response LoginResponseMessage from server
+     */
     public static void login(LoginView view, LoginResponseMessage message) {
         HashMap<String, String> mapData = message.getData();
 
@@ -66,6 +90,11 @@ public class UserHandleResponseController {
         Global.getInstance().remove("savePassword");
     }
 
+    /**
+     * Handling response from Server after client sent getFriendList request
+     * @param view current view
+     * @param message the response GetFriendListResponseMessage from server
+     */
     public static void getFriendList(View view, GetFriendListResponseMessage message) {
         HashMap<String, String> mapData = message.getData();
         if(message.getStatus()) {
@@ -77,6 +106,11 @@ public class UserHandleResponseController {
         }
     }
 
+    /**
+     * Handling response from Server after client sent sendMessage request
+     * @param view current view
+     * @param message the response SendMessageResponseMessage from server
+     */
     public static void sendMessage(ChatView view, SendMessageResponseMessage message) {
         if(message.getStatus()) {
             // get the temporarily store current message model
@@ -89,23 +123,33 @@ public class UserHandleResponseController {
         }
     }
 
-
+    /**
+     * Handling response from Server after client sent getLatestData request
+     * @param view current view
+     * @param message the response GetLatestDataResponseMessage from server
+     */
     public static void getLatestData(ChatView view, GetLatestDataResponseMessage message) {
 //      {
 //          "response":"getLatestData",
 //          "status":"succeed",
 //          "data" :{
 //              "newMessages":"[MessageMode11, MessageMode12,...]",
-//              "addFriendRequesters":"[UserModel1, Usermodel2,...]",
-//              "acceptedUsers":"[UserModel1, Usermodel2,...]",
-//              "rejectedUsers":"[Usermodel1, Usermodel2,...]"
+//              "addFriendRequesters":"[UserModel1, UserModel2,...]",
+//              "acceptedUsers":"[UserModel1, UserModel2,...]",
+//              "rejectedUsers":"[UserModel1, UserModel2,...]",
+//              "deletedUsers":"[UserModel1, UserModel2,...]"
 //           }
 //      }
         if(message.getStatus()) {
             HashMap<String, String> mapData = message.getData();
+
             String jsonNewMessages = mapData.get("newMessages");
             ArrayList<MessageModel> newMessages = Json.getInstance().fromJson(jsonNewMessages, new TypeToken<ArrayList<MessageModel>>(){}.getType());
             view.setGetLatestMessageSucceed(newMessages);
+
+            String jsonDeletedUsers = mapData.get("deletedUsers");
+            ArrayList<UserModel> deletedUsers = Json.getInstance().fromJson(jsonDeletedUsers, new TypeToken<ArrayList<UserModel>>() {}.getType());
+            view.setGetLatestDeletedUsersSucceed(deletedUsers);
 
             String jsonAddFriendRequesters = mapData.get("addFriendRequesters");
             ArrayList<UserModel> addFriendRequesters = Json.getInstance().fromJson(jsonAddFriendRequesters, new TypeToken<ArrayList<UserModel>>(){}.getType());
@@ -118,12 +162,18 @@ public class UserHandleResponseController {
             String jsonRejectedUsers = mapData.get("rejectedUsers");
             ArrayList<UserModel> rejectedUsers = Json.getInstance().fromJson(jsonRejectedUsers, new TypeToken<ArrayList<UserModel>>(){}.getType());
             view.setGetLatestRejectedUsersSucceed(rejectedUsers);
+
         } else {
             String failMessage = message.getData().get("message");
             view.setGetLatestDataFail(failMessage);
         }
     }
 
+    /**
+     * Handling response from Server after client sent addFriend request
+     * @param view current view
+     * @param message the response AddFriendResponseMessage from server
+     */
     public static void addFriend(ChatView view, AddFriendResponseMessage message) {
         if(message.getStatus()) {
             view.setAddFriendSucceed("Request sent, please wait for confirmation.");
@@ -133,6 +183,11 @@ public class UserHandleResponseController {
         };
     }
 
+    /**
+     * Handling response from Server after client sent acceptFriend request
+     * @param view current view
+     * @param message the response AcceptFriendResponseMessage from server
+     */
     public static void acceptFriend(ChatView view, AcceptFriendResponseMessage message) {
         if(!message.getStatus()) {
             String failMessage = message.getData().get("message");
@@ -140,6 +195,11 @@ public class UserHandleResponseController {
         }
     }
 
+    /**
+     * Handling response from Server after client sent rejectFriend request
+     * @param view current view
+     * @param message the response RejectFriendResponseMessage from server
+     */
     public static void rejectFriend(ChatView view, RejectFriendResponseMessage message) {
         if(!message.getStatus()) {
             String failMessage = message.getData().get("message");
@@ -147,13 +207,17 @@ public class UserHandleResponseController {
         }
     }
 
-    public static void register(RegisterView view, RegisterResponseMessage message) {
+    /**
+     * Handling response from Server after client sent deleteFriend request
+     * @param view current view
+     * @param message the response DeleteFriendResponseMessage from server
+     */
+    public static void deleteFriend(ChatView view, DeleteFriendResponseMessage message) {
         if(message.getStatus()) {
-            String succeedMessage = message.getData().get("message");
-            view.setRegisterSucceed(succeedMessage);
+            view.setDeleteFriendSucceed();
         } else {
             String failMessage = message.getData().get("message");
-            view.setRegisterFail(failMessage);
+            view.setDeleteFriendFail(failMessage);
         }
     }
 }

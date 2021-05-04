@@ -11,9 +11,9 @@ public class Network {
 
     public Network(View view, Listener onReceivedDataListener){
         this.client = new Client();
-        String serverAddress = Global.getInstance().getProperty("mainServerIP");
-        int serverPort = Integer.parseInt(Global.getInstance().getProperty("mainServerPort"));
-        int localPort = Integer.parseInt(Global.getInstance().getProperty("localPort"));
+        String serverAddress = Global.getInstance().getProperty("SERVER_IP");
+        int serverPort = Integer.parseInt(Global.getInstance().getProperty("SERVER_PORT"));
+        int localPort = Integer.parseInt(Global.getInstance().getProperty("LOCAL_PORT"));
         this.client.start();
 
         try {

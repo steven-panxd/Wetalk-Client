@@ -4,13 +4,13 @@ import wetalk_client.utils.Global;
 
 public class AcceptFriendRequestMessage extends RequestMessage {
     public static final String requestName = Global.getInstance().getProperty("acceptFriendPrefix");
-    private final int acceptFriendID;
+    private final int acceptedFriendID;
 
-    public AcceptFriendRequestMessage(int acceptFriendID) {
-        this.acceptFriendID = acceptFriendID;
+    public AcceptFriendRequestMessage(int acceptedFriendID) {
+        this.acceptedFriendID = acceptedFriendID;
     }
 
-    public int getAcceptFriendID() {
-        return acceptFriendID;
+    public int getAcceptedFriendID() {
+        return acceptedFriendID;
     }
 }

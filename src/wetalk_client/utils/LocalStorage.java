@@ -5,8 +5,11 @@ import wetalk_client.App;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
+/**
+ * A helper class for saving and reading local files
+ * Singleton design pattern
+ */
 public class LocalStorage {
     private static final LocalStorage instance = new LocalStorage();
     File tempDir;
@@ -23,6 +26,12 @@ public class LocalStorage {
         }
     }
 
+    /**
+     * Saves string data to a file named fileName
+     * @param fileName target file's name
+     * @param data string data that user wants to store
+     * @throws IOException when can not access the file
+     */
     public void saveDataToFile(String fileName, String data) throws IOException {
         File tempFile = new File(this.tempDir.getPath(), fileName);
         if(!tempFile.exists()) {
@@ -33,17 +42,12 @@ public class LocalStorage {
         tempFileStream.close();
     }
 
-    public void appendDataToFile(String fileName, String data) throws IOException {
-        File tempFile = new File(this.tempDir.getPath(), fileName);
-        System.out.println(tempFile.getPath());
-        if(!tempFile.exists()) {
-            tempFile.createNewFile();
-        }
-        OutputStream tempFileStream = new FileOutputStream(tempFile, true);
-        tempFileStream.write(data.getBytes(StandardCharsets.UTF_8));
-        tempFileStream.close();
-    }
-
+    /**
+     * Reads string data from a file named fileName
+     * @param fileName target file's name
+     * @return string data read from the file
+     * @throws IOException when can not access the file
+     */
     public String readDataFromFile(String fileName) throws IOException {
         File tempFile = new File(this.tempDir.getPath(), fileName);
         if(!tempFile.exists()) {
@@ -67,16 +71,22 @@ public class LocalStorage {
         return data;
     }
 
+    /**
+     * Deletes file named fileName
+     * @param fileName the file's name that wants to delete
+     */
     public void deleteFile(String fileName) {
         File tempFile = new File(this.tempDir.getPath(), fileName);
-        System.out.println(tempFile.getPath());
-        System.out.println(tempFile.exists());
         if(!tempFile.exists()) {
             return;
         }
         tempFile.delete();
     }
 
+    /**
+     * Returns the only one instance of LocalStorage
+     * @return an instance of LocalStorage
+     */
     public static LocalStorage getInstance() {
         return LocalStorage.instance;
     }

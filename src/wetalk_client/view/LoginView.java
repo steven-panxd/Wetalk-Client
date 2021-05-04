@@ -58,7 +58,7 @@ public class LoginView extends View {
         this.passwordLabel = new JLabel("password");
         this.usernameTextField = new JTextField(10);
         this.usernameTextField.setText(tempData.getOrDefault("username", ""));
-        this.passwordTextField = new JTextField(10);
+        this.passwordTextField = new JPasswordField(10);
         this.passwordTextField.setText(tempData.getOrDefault("password", ""));
         this.savePasswordCheckbox = new JCheckBox("Save Password");
         this.savePasswordCheckbox.setSelected(Boolean.parseBoolean(tempData.getOrDefault("savePassword", "false")));

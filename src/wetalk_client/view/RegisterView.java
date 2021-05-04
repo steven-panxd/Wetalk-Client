@@ -39,8 +39,8 @@ public class RegisterView extends View {
         this.passwordLabel = new JLabel("password");
         this.rePasswordLabel = new JLabel("repeat password");
         this.usernameTextField = new JTextField(10);
-        this.passwordTextField = new JTextField(10);
-        this.rePasswordTextField = new JTextField(10);
+        this.passwordTextField = new JPasswordField(10);
+        this.rePasswordTextField = new JPasswordField(10);
         this.registerButton = new JButton("Register");
         this.registerButton.addActionListener(e -> {
             this.onRegister();

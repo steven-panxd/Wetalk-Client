@@ -6,6 +6,9 @@ import wetalk_client.view.LoginView;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Entrance of the project
+ */
 public class App {
     public static void main(String[] args) {
         LinkedBlockingQueue<RequestMessage> queue = new LinkedBlockingQueue<>();

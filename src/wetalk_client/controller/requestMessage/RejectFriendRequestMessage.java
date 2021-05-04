@@ -4,13 +4,13 @@ import wetalk_client.utils.Global;
 
 public class RejectFriendRequestMessage extends RequestMessage {
     public static final String requestName = Global.getInstance().getProperty("rejectFriendPrefix");
-    private final int rejectFriendID;
+    private final int rejectedFriendID;
 
-    public RejectFriendRequestMessage(int rejectFriendID) {
-        this.rejectFriendID = rejectFriendID;
+    public RejectFriendRequestMessage(int rejectedFriendID) {
+        this.rejectedFriendID = rejectedFriendID;
     }
 
-    public int getRejectFriendID() {
-        return rejectFriendID;
+    public int getRejectedFriendID() {
+        return rejectedFriendID;
     }
 }
