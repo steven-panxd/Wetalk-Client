@@ -1,10 +1,10 @@
 package wetalk_client.view;
 
-import wetalk_client.model.UserModel;
-
 import javax.swing.*;
-import java.util.ArrayList;
 
+/**
+ * Base view for all views
+ */
 public abstract class View extends JFrame {
     public View() {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Login view
+ */
 public class LoginView extends View {
     BlockingQueue<RequestMessage> queue;
     private final Panel loginPanel;
@@ -25,6 +28,10 @@ public class LoginView extends View {
     private final JButton loginButton;
     private final JButton registerButton;
 
+    /**
+     * Constructor of LoginView
+     * @param queue The blocking queue to send request to controller
+     */
     public LoginView(BlockingQueue<RequestMessage> queue) {
         super();
 
@@ -104,12 +111,19 @@ public class LoginView extends View {
         }
     }
 
+    /**
+     * Should be called when controller received a flag that login failed
+     * @param message error message
+     */
     public void loginFail(String message) {
         this.showAlert(message);
         this.loginButton.setEnabled(true);
         this.registerButton.setEnabled(true);
     }
 
+    /**
+     * Should be called when controller received a flag that login succeed
+     */
     public void loginSucceed() {
         RequestMessage switchToChatViewRequestMessage = new SwitchViewRequestMessage(new LoadingView(queue));
         try {

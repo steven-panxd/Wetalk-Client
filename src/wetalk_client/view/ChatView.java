@@ -21,6 +21,11 @@ import java.util.concurrent.BlockingQueue;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 
+/**
+ * Chat View
+ * The view can for user to chat with other users
+ * Need login and fetch friendList before construct this view
+ */
 public class ChatView extends View {
 	private final BlockingQueue<RequestMessage> queue;
 	private final UserModel loginedUser;
@@ -37,6 +42,10 @@ public class ChatView extends View {
 	private final JScrollPane friendJListScrollPanel;
 
 
+	/**
+	 * Constructor of ChatView
+	 * @param queue The blocking queue to send request to controller
+	 */
 	public ChatView(BlockingQueue<RequestMessage> queue) {
 		super();
 
@@ -197,7 +206,7 @@ public class ChatView extends View {
 		}
 	}
 
-	public void refreshChatHistoryTextField() {
+	private void refreshChatHistoryTextField() {
 		if(currentChattingFriend == null) {
 			return;
 		}
@@ -214,6 +223,10 @@ public class ChatView extends View {
 		this.chatHistoryScrollPanel.getViewport().setViewPosition(new Point(0, maxHeight));
 	}
 
+	/**
+	 * Should be called when controller received the flag that the massage just sent by current user is sent successful
+	 * @param messageModel The model of the message that current user just sent
+	 */
 	public void setSendMessageSucceed(MessageModel messageModel) {
 		this.appendChatHistoryToFileAndMemory(messageModel);
 		this.refreshChatHistoryTextField();
@@ -293,12 +306,20 @@ public class ChatView extends View {
 		return chatHistoryDisplay;
 	}
 
+	/**
+	 * Should be called when controller received the flag that the massage just sent by current user is sent fail
+	 * @param message Error message.
+	 */
 	public void setSendMessageFail(String message) {
 		this.getLatestDataTimer.stop();
 		this.showAlert(message);
 		this.sendContentButton.setEnabled(true);
 	}
 
+	/**
+	 * Should be called when controller received new message(s)
+	 * @param newMessages A list of MessageModels
+	 */
 	public void setGetLatestMessageSucceed(ArrayList<MessageModel> newMessages) {
 		if(newMessages.size() == 0) {
 			return;
@@ -318,6 +339,10 @@ public class ChatView extends View {
 		this.getLatestDataTimer.restart();
 	}
 
+	/**
+	 * SHould be called when controller fetched latest data fail
+	 * @param message Error message
+	 */
 	public void setGetLatestDataFail(String message) {
 		this.showAlert(message);
 	}
@@ -351,10 +376,18 @@ public class ChatView extends View {
 		Global.getInstance().put("chatHistory", chatHistoryHashMap);
 	}
 
+	/**
+	 * Should be called when controller received the flag that add a friend succeed.
+	 * @param message alert message
+	 */
 	public void setAddFriendSucceed(String message) {
 		this.showAlert(message);
 	}
 
+	/**
+	 * Should be called when controller received the flag that add a friend fail.
+	 * @param message error message
+	 */
 	public void setAddFriendFail(String message) {
 		this.showAlert(message);
 	}
@@ -425,6 +458,10 @@ public class ChatView extends View {
 		return menu;
 	}
 
+	/**
+	 * Should be called when controller received a list of add friend requesters (other users)
+	 * @param addFriendRequesters A list of UserModels
+	 */
 	public void setGetLatestAddFriendRequesterSucceed(ArrayList<UserModel> addFriendRequesters) {
 		if(addFriendRequesters.size() == 0) { return; }
 
@@ -451,6 +488,10 @@ public class ChatView extends View {
 		this.getLatestDataTimer.restart();
 	}
 
+	/**
+	 * Should be called when controller received a list of accepted add friend request sent by current user before
+	 * @param acceptedUsers A list of UserModels
+	 */
 	public void setGetLatestAcceptedUsersSucceed(ArrayList<UserModel> acceptedUsers) {
 		if(acceptedUsers.size() == 0) { return; }
 
@@ -478,6 +519,10 @@ public class ChatView extends View {
 		this.friendJListScrollPanel.getViewport().setViewPosition(new Point(0, maxHeight));
 	}
 
+	/**
+	 * Should be called when controller received a list of rejected add friend request sent by current user before
+	 * @param rejectedUsers A list of UserModels
+	 */
 	public void setGetLatestRejectedUsersSucceed(ArrayList<UserModel> rejectedUsers) {
 		if(rejectedUsers.size() == 0) { return; }
 
@@ -488,6 +533,9 @@ public class ChatView extends View {
 		this.getLatestDataTimer.restart();
 	}
 
+	/**
+	 * Should be called when controller received a flag that delete a friend succeed
+	 */
 	public void setDeleteFriendSucceed() {
 		this.getLatestDataTimer.stop();
 		UserModel deletedFriend = (UserModel) Global.getInstance().remove("deletedFriend");
@@ -504,10 +552,18 @@ public class ChatView extends View {
 		this.getLatestDataTimer.restart();
 	};
 
+	/**
+	 * Should be called when controller received a flag that delete a friend fail
+	 * @param message error message
+	 */
 	public void setDeleteFriendFail(String message) {
 		this.showAlert(message);
 	}
 
+	/**
+	 * Should be called when controller received a list of deleted friend request created by other users
+	 * @param deletedUsers A list of UserModels
+	 */
 	public void setGetLatestDeletedUsersSucceed(ArrayList<UserModel> deletedUsers) {
 		this.getLatestDataTimer.stop();
 		for(UserModel deletedUser : deletedUsers) {

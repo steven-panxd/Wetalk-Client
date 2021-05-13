@@ -3,12 +3,14 @@ package wetalk_client.view;
 import wetalk_client.controller.requestMessage.RequestMessage;
 import wetalk_client.controller.requestMessage.RegisterRequestMessage;
 import wetalk_client.controller.requestMessage.SwitchViewRequestMessage;
-import wetalk_client.model.MessageModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Register View
+ */
 public class RegisterView extends View {
     private final BlockingQueue<RequestMessage> queue;
     private final Panel registerPanel;
@@ -21,6 +23,10 @@ public class RegisterView extends View {
     private final JButton registerButton;
     private final JButton backButton;
 
+    /**
+     * Constructor of RegisterView
+     * @param queue The blocking queue to send request to controller
+     */
     public RegisterView(BlockingQueue<RequestMessage> queue) {
         super();
         this.queue = queue;
@@ -87,12 +93,20 @@ public class RegisterView extends View {
         }
     }
 
+    /**
+     * Should be called when controller received a flag that register fail
+     * @param message Error message
+     */
     public void setRegisterFail(String message) {
         this.showAlert(message);
         this.registerButton.setEnabled(true);
         this.backButton.setEnabled(true);
     }
 
+    /**
+     * Should be called when controller received a flag that register succeed
+     * @param message Alert message
+     */
     public void setRegisterSucceed(String message) {
         this.showAlert(message);
         this.registerButton.setEnabled(true);

@@ -9,9 +9,17 @@ import javax.swing.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
+/**
+ * Loading view after login
+ * Fetch the latest version of friend list and store it to memory for Chat view to use
+ */
 public class LoadingView extends View{
     private final BlockingQueue<RequestMessage> queue;
 
+    /**
+     * Constructor of LoadingView
+     * @param queue The blocking queue to send request to controller
+     */
     public LoadingView(BlockingQueue<RequestMessage> queue) {
         super();
 
@@ -51,7 +59,7 @@ public class LoadingView extends View{
         new Thread(runnable).start();
     }
 
-    static class WaitingFriendListRunnable implements Runnable {
+    private static class WaitingFriendListRunnable implements Runnable {
         private final Global global;
         private final Callable<Void> callback;
 
