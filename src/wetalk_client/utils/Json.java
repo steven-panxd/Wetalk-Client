@@ -14,14 +14,29 @@ public class Json{
     private static final Json instance = new Json();
     private final Gson gson;
 
+    /**
+     * Constructor of Json class
+     */
     public Json() {
         this.gson = new Gson();
     }
 
+    /**
+     * Convert Json string to Java object
+     * @param json Json string
+     * @param typeOf Java object type
+     * @param <T> Return Java object type
+     * @return Return correct type of java object
+     */
     public <T> T fromJson(String json, Type typeOf) {
         return this.gson.fromJson(json, typeOf);
     }
 
+    /**
+     * Convert Java object to Json string
+     * @param src Source Java object
+     * @return Return correct Json string
+     */
     public String toJson(Object src) {
         return this.gson.toJson(src);
     }

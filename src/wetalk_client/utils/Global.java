@@ -14,6 +14,9 @@ import java.util.Properties;
 public class Global extends Properties {
     private static final Global instance = new Global();
 
+    /**
+     * Constructor of Global class
+     */
     private Global() {
         Properties props = new Properties();
 
