@@ -1,0 +1,7 @@
+wetalk_client
+wetalk_client.controller
+wetalk_client.controller.requestMessage
+wetalk_client.controller.responseMessage
+wetalk_client.model
+wetalk_client.utils
+wetalk_client.view
