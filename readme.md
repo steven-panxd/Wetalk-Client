@@ -5,7 +5,7 @@ A simple chat application on Java. (Client)
 
 # Dependencies
 #### All required jar files are in libs folder
-- [Kyronet](https://github.com/EsotericSoftware/kryonet "Kyronet") (Java TCP/UDP server/client library)
+- [Kryonet](https://github.com/EsotericSoftware/kryonet "Kryonet") (Java TCP/UDP server/client library)
 - [Gson](https://github.com/google/gson "Gson") (Json serializer)
 
 # GUI Screenshots
